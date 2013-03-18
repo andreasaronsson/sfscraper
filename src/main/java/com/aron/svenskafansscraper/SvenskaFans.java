@@ -3,12 +3,11 @@
  */
 package com.aron.svenskafansscraper;
 
-import java.io.IOException;
+import java.util.List;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import com.almworks.sqlite4java.SQLiteConnection;
+import com.almworks.sqlite4java.SQLiteException;
+import com.almworks.sqlite4java.SQLiteStatement;
 
 /**
  *
@@ -17,34 +16,55 @@ class SvenskaFans {
 
     /**
      * @param args
-     * @throws IOException
      */
-    public static void main(String[] args) throws IOException {
-        // TODO Auto-generated method stub
-        String urlString = "http://www.svenskafans.com/fotboll/ifkgoteborg/forum.aspx";
+    public static void main(String[] args) {
 
-        Document document = Jsoup.connect(urlString).get();
-//        Elements posts = document.getElementsByClass("m_cont");
+        SQLiteConnection db = Database.connection();
+        LinkScraper.scrape();
+        List<Post> posts = new PostScraper().scrape();
 
-//        for (Element elem : posts) {
-//            // System.err.println(elem.text());
-//            // Element elem = elems.get(1);
-//            String name = elem.select("a").first().text();
-//            System.err.println(name);
-//            String sent = elem.select("b").get(1).text();
-//            System.err.println(sent);
-//            String post = elem.getElementsByClass("m_in").text();
-//
-//            System.err.println(post); // TODO:separate the quoted posts. 
-//            System.err.println("\n\n\n");
-//        }
-        
-        // TODO: Dig out link tip... 
-        Element linkTipsHeader = document.getElementsByClass("ls_top_news_header_end_not_sl").get(1);
-        for (Element linkRefs : linkTipsHeader.siblingElements()) {
-            for (Element linkRef : linkRefs.select("a")) {
-                System.err.println(linkRef.toString());
+        for (Post p : posts) {
+            if (!exists(db, p)) {
+                persist(db, p);
             }
+        }
+        db.dispose();
+    }
+
+    /**
+     * @param db
+     * @param p
+     * @return
+     */
+    private static boolean exists(SQLiteConnection db, Post p) {
+        SQLiteStatement st;
+        boolean exist = false;
+        try {
+            String query = String.format("SELECT * FROM 'posts' WHERE hash=%d;", p.hashCode());
+            st = db.prepare(query);
+            exist = st.step();
+            st.dispose();
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+        }
+        return exist;
+    }
+
+    /**
+     * @param db
+     * @param p
+     * @return
+     */
+    private static void persist(SQLiteConnection db, Post p) {
+        SQLiteStatement st;
+        try {
+            String query = String.format("INSERT INTO 'posts' (name, post, hash, sent) VALUES('%s', '%s', '%d', '%s');", p.getName(), p.getPost(),
+                    p.hashCode(), p.getSent());
+            st = db.prepare(query);
+            st.stepThrough();
+            st.dispose();
+        } catch (SQLiteException e) {
+            e.printStackTrace();
         }
     }
 
