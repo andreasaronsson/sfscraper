@@ -7,7 +7,10 @@
 	<version>1.0.0-SNAPSHOT</version>
 	<properties>
 		<sqlite4java.version>0.282</sqlite4java.version>
-	</properties>
+        </properties>
+    <prerequisites>
+       <maven>3.0.4</maven>
+     </prerequisites>
 
 	<dependencies>
 		<dependency>
@@ -60,7 +63,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.13</version>
+				<version>2.14</version>
 				<configuration>
 					<systemProperties>
 						<property>
