@@ -12,7 +12,7 @@ import com.almworks.sqlite4java.SQLiteStatement;
 /**
  *
  */
-class SvenskaFans {
+public class SvenskaFans {
 
     /**
      * @param args
