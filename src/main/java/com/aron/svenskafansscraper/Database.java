@@ -20,15 +20,10 @@ class Database {
     
     static SQLiteConnection connection() {
         
-        SQLiteConnection db = new SQLiteConnection(new File("/home/aron/test"));
+        SQLiteConnection db = new SQLiteConnection(new File(System.getProperty("sf.db")));
         try {
             SQLite.loadLibrary();
             db.open();
-            
-            
-//          SQLiteStatement statement = db.prepare("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;");
-//          boolean data = st.step();
-//          System.err.println("Data? " + data);
         } catch (SQLiteException e) {
             e.printStackTrace();
         }
