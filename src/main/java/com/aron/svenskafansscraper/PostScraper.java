@@ -30,7 +30,7 @@ class PostScraper {
             for (Element elem : elements) {
                 String name = elem.select("a").first().text();
                 String sent = elem.select("b").get(1).text();
-                String post = elem.getElementsByClass("m_in").text();
+                String post = elem.getElementsByClass("m_in").outerHtml();
                 Post p = new Post(name, sent, post);
                 posts.add(p);
             }
@@ -38,5 +38,13 @@ class PostScraper {
             e.printStackTrace();
         }
         return posts;
+    }
+    
+    public static void main(String[] args) {
+        List<Post> posts = new PostScraper().scrape();
+        for (Post p : posts) {
+            System.err.println(p.getPost());
+            System.err.println();
+        }
     }
 }
