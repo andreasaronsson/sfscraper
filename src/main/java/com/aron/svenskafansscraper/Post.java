@@ -35,7 +35,7 @@ class Post {
      * @return the post
      */
     final String getPost() {
-        return post;
+        return post.replaceAll("'", "''");
     }
 
     /*
