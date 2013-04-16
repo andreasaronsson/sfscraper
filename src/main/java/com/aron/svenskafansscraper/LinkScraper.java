@@ -4,6 +4,7 @@
 package com.aron.svenskafansscraper;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.net.URLDecoder;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,7 +16,7 @@ import org.jsoup.nodes.Element;
 /**
  *
  */
-public class LinkScraper {
+class LinkScraper {
     private final static String SVENSKA_FANS_FORUM_URL = "http://www.svenskafans.com/fotboll/ifkgoteborg/forum.aspx";
     private List<LinkTip> links = new LinkedList<LinkTip>();
 
@@ -34,6 +35,8 @@ public class LinkScraper {
                     }
                 }
             }
+        } catch (SocketTimeoutException ste) {
+            // These are spurious. Ignore.
         } catch (IOException e) {
             e.printStackTrace();
         }
